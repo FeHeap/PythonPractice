@@ -34,6 +34,7 @@ output:
 -40
 -70
 '''
+
 name = "taiwan"
 for x in name:
     print(x,end="\t")
