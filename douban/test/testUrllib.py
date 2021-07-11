@@ -24,7 +24,7 @@ except urllib.error.URLError as e:
 
 
 response = urllib.request.urlopen("http://www.baidu.com")
-print(response.status) #(404:找不到),(418:我是一個茶壺)
+print(response.status) #(404:找不到),(418:我是一個茶壺),更多參間：https://zh.wikipedia.org/wiki/HTTP%E7%8A%B6%E6%80%81%E7%A0%81
 print(response.getheaders())
 print(response.getheader("Server"))
 

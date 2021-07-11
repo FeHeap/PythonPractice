@@ -13,8 +13,10 @@ def main():
     #1.爬取網頁
     datalist = getData(baseurl)
     savepath = ".\\DoubanMovieTop250.xls"
+    dbpath = "movie.db"
     #3.保存數據
     saveData(datalist,savepath)
+    saveDataDB(datalist,dbpath)
     #askURL("https://movie.douban.com/top250?start=")
 
 #影片詳情連結的規則
@@ -100,9 +102,6 @@ def askURL(url):
             print(e.reason)
     return html
 
-
-
-
 #保存數據
 def saveData(datalist,savepath):
     book = xlwt.Workbook(encoding="utf-8",style_compression=0)
@@ -119,5 +118,51 @@ def saveData(datalist,savepath):
 
     book.save(savepath) #保存
 
+def saveDataDB(datalist,dbpath):
+   init_db(dbpath)
+   conn = sqlite3.connect(dbpath)
+   cur = conn.cursor()
+
+   for data in datalist:
+       for index in range(len(data)):
+           if index == 4 or index == 5:
+               continue
+           data[index] = '"' + data[index] + '"'
+       sql = """
+           insert into movie250 (
+           info_link,pic_link,cname,ename,score,rated,introduction,info)
+           values(%s)
+           """%",".join(data)
+       print(sql)
+       cur.execute(sql)
+       conn.commit()
+   cur.close()
+   conn.close()
+
+
+
+def init_db(dbpath):
+    sql = """
+        create table movie250
+        (
+        id integer primary key autoincrement,
+        info_link text,
+        pic_link text,
+        cname varchar,
+        ename varchar,
+        score numeric,
+        rated numeric,
+        introduction text,
+        info text
+        )
+    """    #創建數據表
+    conn = sqlite3.connect(dbpath)
+    cursor = conn.cursor()
+    cursor.execute(sql)
+    conn.commit()
+    conn.close()
+
 if __name__ == "__main__":
     main()
+    #init_db("movietest.db")
+
