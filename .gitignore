@@ -1,2 +1,9 @@
 PythonInterview.doc
 .idea
+
+douban/.idea
+douban/venv
+
+flaskPractice/.idea
+flaskPractice/venv
+flaskPractice/__pycache__
