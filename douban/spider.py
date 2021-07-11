@@ -14,8 +14,23 @@ def main():
     datalist = getData(baseurl)
     savepath = ".\\DoubanMovieTop250.xls"
     #3.保存數據
-    saveData(savepath)
-    askURL("https://movie.douban.com/top250?start=")
+    saveData(datalist,savepath)
+    #askURL("https://movie.douban.com/top250?start=")
+
+#影片詳情連結的規則
+findLink = re.compile(r'<a href="(.*?)">') #創建正規表達式對象，表示規則(字符串的模式)
+#影片圖片
+findImgSrc = re.compile(r'<img.*src="(.*?)"',re.S)  #re.S 讓換行符包含在字符中
+#影片片名
+findTitle = re.compile(r'<span class="title">(.*)</span>')
+#影片評分
+findRating = re.compile(r'<span class="rating_num" property="v:average">(.*)</span>')
+#找到評價人數
+findJudge = re.compile(r'<span>(\d*)人评价</span>')
+#找到概況
+findInq = re.compile(r'<span class="inq">(.*)</span>')
+#找到影片的相關內容
+findBd = re.compile(r'<p class="">(.*?)</p>',re.S)
 
 #爬取網頁
 def getData(baseurl):
@@ -24,6 +39,46 @@ def getData(baseurl):
         url = baseurl + str(i*25)
         html = askURL(url)  #保存獲取到的網頁原碼
         # 2.逐一解析數據
+        soup = BeautifulSoup(html,"html.parser")
+        for item in soup.find_all('div',class_="item"): #查找符合要求的字符串，形成列表
+            #print(item) #測試，查看電影item全部信息
+            data = []   #保存一部電影的所有信息
+            item = str(item)
+            #影片詳情連結
+            link = re.findall(findLink,item)[0] #re庫用來通過正規表達式查找指定的字符串
+            data.append(link)                   #添加連結
+            ImgSrc = re.findall(findImgSrc,item)[0]
+            data.append(ImgSrc)                 #添加圖片
+            titles = re.findall(findTitle,item) #片名可能只有一個中文名，沒有外國名
+            if(len(titles) == 2):
+                ctitle = titles[0]
+                data.append(ctitle)
+                otitle = titles[1].replace("/","")  #去掉無關的符號
+                data.append(otitle)                 #添加外國名
+            else:
+                data.append(titles[0])
+                data.append(' ')                    #外國名字留空
+
+            rating = re.findall(findRating,item)[0]
+            data.append(rating)                     #添加評分
+
+            judgeNum = re.findall(findJudge,item)[0]
+            data.append(judgeNum)                   #添加評分人數
+
+            inq = re.findall(findInq,item)
+            if len(inq) != 0:
+                inq = inq[0].replace("。","")
+                data.append(inq)                    #添加概述
+            else:
+                data.append(" ")                    #概述留空
+
+            bd = re.findall(findBd,item)[0]
+            bd = re.sub("<br(\s+)?/>(\s+)?"," ",bd) #去掉<br/>
+            bd = re.sub('/'," ",bd) #替換/
+            data.append(bd.strip()) #去掉前後的空格
+
+            datalist.append(data)   #把處理好的一部電影信息放入datalist
+
     return datalist
 
 #得到指定一個URL的網頁內容
@@ -37,7 +92,7 @@ def askURL(url):
     try:
         response = urllib.request.urlopen(request)
         html = response.read().decode("utf-8")
-        print(html)
+        #print(html)
     except urllib.error.URLError as e:
         if hasattr(e,"code"):
             print(e.code)
@@ -49,8 +104,20 @@ def askURL(url):
 
 
 #保存數據
-def saveData(savepath):
-    print("save...")
+def saveData(datalist,savepath):
+    book = xlwt.Workbook(encoding="utf-8",style_compression=0)
+    sheet = book.add_sheet("豆瓣電影Top250",cell_overwrite_ok=True)
+    col = ("電影詳情連結","圖片連結","影片中文名","影片外國名","評分","評價數","概況","相關信息")
+    for i in range(0,8):
+        sheet.write(0,i,col[i]) #行名
+
+    for i in range(0,250):
+        print("第%d條"%i)
+        data = datalist[i]
+        for j in range(0,8):
+            sheet.write(i+1,j,data[j])  #數據
+
+    book.save(savepath) #保存
 
 if __name__ == "__main__":
     main()
