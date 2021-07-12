@@ -49,7 +49,7 @@ def getData(baseurl):
     html = askURL(baseurl)
     m = last.search(html)
     lastPage = int(re.search("[\d]+",m[0])[0])
-    lastPage //= 100
+    # lastPage //= 100
     datalist = []
     if(len(language) != 0):
         languageCJE = languageDictrev[language]
