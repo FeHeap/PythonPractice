@@ -11,3 +11,8 @@ flaskPractice/__pycache__
 nhentai/.idea
 nhentai/venv
 nhentai/__pycache__
+
+douban_flask
+
+flaskPractice/templates/test/echarts.min.js
+flaskPractice/templates/test/testEcharts.html
