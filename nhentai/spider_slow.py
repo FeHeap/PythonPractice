@@ -2,7 +2,6 @@
 # @Time: 2021/7/12 上午 06:04
 # @Software: PyCharm
 
-from bs4 import BeautifulSoup
 import re
 import urllib.request,urllib.error
 import xlwt
