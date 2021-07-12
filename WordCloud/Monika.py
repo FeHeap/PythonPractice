@@ -7,85 +7,69 @@ from matplotlib import pyplot as plt
 from wordcloud import WordCloud,ImageColorGenerator
 from PIL import Image
 import numpy as np
+import sys
 
-data = ["只選莫妮卡","心跳","Doki","文學部","社團","刪除","delete","Your Reality","monika",
-"""
-Every day, I imagine a future where I can be with you
-In my hand is a pen that will write a poem of me and you
-The ink flows down into a dark puddle
-Just move your hand, write the way into his heart
-But in this world of infinite choices
-What will it take just to find that special day
-What will it take just to find that special day
-Have I found everybody a fun assignment to do today
-When you're here, everything that we do is fun for them anyway
-When I can't even read my own feelings
-What good are words when a smile says it all
-And if this world won't write me an ending
-What will it take just for me to have it all
-Does my pen only write bitter words for those who are dear to me
-Is it love if I take you, or is it love if I set you free
-The ink flows down into a dark puddle
-How can I write love into reality?
-If I can't hear the sound of your heartbeat
-What do you call love in your reality
-And in your reality, if I don't know how to love you
-I'll leave you be""",
-"""Can you hear me?
-...Who are you?
-I can't...I can't see you.
-But I know you're there. Yeah...you can definitely hear me.
-You've been watching for a while now, right?
-I guess I should...introduce myself, or something. Um...my name is...actually, that's stupid. You obviously already know my name. Sorry.
-Anyway...I'm guessing if you were able to put a stop to this, you would have done it by now.
-I mean, I know you're not, like...evil, or anything...because you've already helped me so much.
-I should really thank you for that. For everything you've done. You're really like a friend to me. So...thank you. So much.
-I think...more than anything else...I really don't want it to all be for nothing.
-...
-Everyone else is dead.
-Maybe you already know that. I'm sure you do, actually.
-But...it doesn't have to be that way, right?
-Well...there's a lot of stuff I don't understand. I don't know if it's even possible for me to understand it.
-But I know that this isn't my only story.
-I can see that now. Really clearly.
-And I think everyone else has had the same kind of experience. Some kind of deja vu.
-It's the Third Eye, right?
-Anyway...I could be totally wrong about this. But I really think you might be able to do something.
-I think you might be able to go back...or however you want to put it...
-...To go back and tell them what's going to happen.
-If they know ahead of time, then they should be able to avoid it.
-They should...if they remember their time with me in the other worlds...they should remember what I tell them.
-Yeah. I really think this might be possible. But it's up to you.
-I'm sorry for always being...you know...
-Never mind. I know that's wrong.
-This is my story. It's time to be a ****ing hero.
-Both of us.
-""","只選莫妮卡","心跳","Doki","文學部","社團","刪除","delete","monika only","只選莫妮卡","心跳","Doki","文學部","社團","刪除","delete","monika only"
-,"只選莫妮卡","心跳","Doki","文學部","社團","刪除","delete","monika only","只選莫妮卡","心跳","Doki","文學部","社團","刪除","delete","monika only"]
+textFile = "Dokidoki.txt"
+maskFile = "heart.jpg"
+fontSet = "mingliu.ttc"
+backgroundColor = 'black'
+outputFile = "MonikaOnly.jpg"
+
+#read text file
+try:
+    file = open(textFile,"r",encoding="utf-8")
+    try:
+        content = file.read().splitlines()
+    except Exception as result:
+        print("Find Error")
+        sys.exit(0)
+    finally:
+        file.close()
+except FileNotFoundError:
+    print("Can't find file \"%s\""%textFile)
+    sys.exit(1)
 
 text = ""
-for item in data:
-    text += item
+for string in content:
+    text = text + string + " "
 
-#分詞
+#separate words
 cut = jieba.cut(text)
 string = ' '.join(cut)
 
-img = Image.open('heart.jpg')
-img_array = np.array(img)
-wc = WordCloud(
-    background_color='black',
-    mask=img_array,
-    font_path="mingliu.ttc"
-)
-wc.generate_from_text(string)
+#open the mask img
+try:
+    img = Image.open(maskFile)
+except FileNotFoundError:
+    print("Can't find file \"%s\""%maskFile)
+    sys.exit(1)
 
+#transform mask img into list
+img_array = np.array(img)
+try:
+    wc = WordCloud(
+        background_color=backgroundColor,
+        mask=img_array,
+        font_path=fontSet
+    )
+    try:
+        wc.generate_from_text(string)
+    except Exception:
+        print("Find Error! Maybe you should adjust your text file")
+        sys.exit(1)
+except Exception:
+    print("Find Error!")
+    sys.exit(1)
+
+#get the colors from img_array
 image_colors = ImageColorGenerator(img_array)
 
+#generate output word cloud img
 fig = plt.figure(1)
 plt.imshow(wc.recolor(color_func=image_colors), interpolation="bilinear")
-plt.axis('off')
+plt.axis('off') #close axis
 
-#plt.show()
+#plt.show()     #show the worl cloud img
 
-plt.savefig('MonikaOnly.jpg',dpi=500)
+#save the worl cloud img as file
+plt.savefig(outputFile,dpi=500)
