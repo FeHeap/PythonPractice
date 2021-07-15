@@ -16,3 +16,8 @@ douban_flask
 
 flaskPractice/templates/test/echarts.min.js
 flaskPractice/templates/test/testEcharts.html
+
+temp.py
+
+PyGamePractice/.idea
+PyGamePractice/venv
