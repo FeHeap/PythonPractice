@@ -21,3 +21,7 @@ temp.py
 
 PyGamePractice/.idea
 PyGamePractice/venv
+PyGamePractice/build
+PyGamePractice/__pycache__
+PyGamePractice/Game.spec
+PyGamePractice/Refactoring.spec
