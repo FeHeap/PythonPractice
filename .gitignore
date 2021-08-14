@@ -1,16 +1,10 @@
+*/.idea
+*/venv
+*/__pycache__
+
 PythonInterview.doc
 .idea
 
-douban/.idea
-douban/venv
-
-flaskPractice/.idea
-flaskPractice/venv
-flaskPractice/__pycache__
-
-nhentai/.idea
-nhentai/venv
-nhentai/__pycache__
 
 douban_flask
 
@@ -20,13 +14,6 @@ flaskPractice/templates/test/testEcharts.html
 temp.py
 temp1.py
 
-PyGamePractice/.idea
-PyGamePractice/venv
 PyGamePractice/build
-PyGamePractice/__pycache__
 PyGamePractice/Game.spec
 PyGamePractice/Refactoring.spec
-
-cryptography/.idea
-cryptography/venv
-cryptography/__pycache__
